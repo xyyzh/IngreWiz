@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @RestController
@@ -19,6 +20,17 @@ public class RecipeController {
 
     private static final Logger logger = LoggerFactory.getLogger(RecipeController.class);
 
+    @PostMapping("/{recipeId}/clone")
+    public Recipe cloneAndModifyRecipe(@PathVariable Long recipeId, @RequestBody Recipe modifiedRecipe) {
+        Recipe userRecipe = recipeService.clonePublicRecipeForUser(recipeId);
+
+        userRecipe.setRecipeName(modifiedRecipe.getRecipeName());
+        userRecipe.setCategory(modifiedRecipe.getCategory());
+        userRecipe.setDescription(modifiedRecipe.getDescription());
+
+        return recipeService.saveRecipe(userRecipe);
+    }
+
     @GetMapping
     public List<Recipe> getAllRecipes() {
         return recipeService.getAllRecipes();
@@ -26,7 +38,7 @@ public class RecipeController {
 
     // GET /api/recipes/{id} - Get recipe by ID
     @GetMapping("/{id}")
-    public Recipe getRecipeById(@PathVariable Long id) {
+    public Optional<Recipe> getRecipeById(@PathVariable Long id) {
         return recipeService.getRecipeById(id);
     }
 
@@ -39,8 +51,9 @@ public class RecipeController {
     // PUT /api/recipes/{id} - Update an existing recipe
     @PutMapping("/{id}")
     public Recipe updateRecipe(@PathVariable Long id, @RequestBody Recipe recipe) {
-        Recipe existingRecipe = recipeService.getRecipeById(id);
-        if (existingRecipe != null) {
+        Optional<Recipe> optionalRecipe = recipeService.getRecipeById(id);
+        if (optionalRecipe.isPresent()) {
+            Recipe existingRecipe = optionalRecipe.get();
             existingRecipe.setRecipeName(recipe.getRecipeName());
             existingRecipe.setCategory(recipe.getCategory());
             existingRecipe.setServings(recipe.getServings());

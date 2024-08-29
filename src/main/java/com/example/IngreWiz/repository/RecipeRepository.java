@@ -6,6 +6,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
+/*
+Public Recipes: Original, unmodifiable by users, accessible to all.
+Private Recipes: User-specific copies that can be modified without affecting the public version.
+Cloning: Create a new copy when a user wants to modify a public recipe.
+ */
 
 public interface RecipeRepository extends JpaRepository<Recipe, Long> {
 

@@ -15,6 +15,8 @@ public class Recipe {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long recipeId;
 
+    private boolean isPublic;
+
     private String recipeName;
 
     @Enumerated(EnumType.STRING)
@@ -34,9 +36,12 @@ public class Recipe {
     @ElementCollection
     private List<String> photos;
 
+
+
     public Recipe(){}
 
     public Recipe(String recipeName, Category category, int servings, String description, List<String> keyIngredients, List<String> steps, List<String> photos) {
+        this.isPublic = false;
         this.recipeName = recipeName;
         this.category = category;
         this.servings = servings;
@@ -45,5 +50,19 @@ public class Recipe {
         this.steps = steps;
         this.photos = photos;
     }
+
+    /*
+    public Recipe(boolean isPublic, String recipeName, Category category, int servings, String description, List<String> keyIngredients, List<String> steps, List<String> photos) {
+        this.isPublic = isPublic;
+        this.recipeName = recipeName;
+        this.category = category;
+        this.servings = servings;
+        this.description = description;
+        this.keyIngredients = keyIngredients;
+        this.steps = steps;
+        this.photos = photos;
+    }
+
+     */
 
 }
