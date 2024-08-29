@@ -60,4 +60,19 @@ public class RecipeController {
     public void deleteRecipe(@PathVariable Long id) {
         recipeService.deleteRecipe(id);
     }
+
+    // GET /api/recipes/mock - Mock endpoint
+    @GetMapping("/mock")
+    public Recipe getMockRecipe() {
+        Recipe mockRecipe = new Recipe();
+        mockRecipe.setRecipeName("Mock Recipe");
+        mockRecipe.setCategory("Mock Category");
+        mockRecipe.setServings(4);
+        mockRecipe.setDescription("This is a mock recipe for testing purposes.");
+        mockRecipe.setKeyIngredients(List.of("Mock Ingredient 1", "Mock Ingredient 2"));
+        mockRecipe.setSteps(List.of("Mock Step 1", "Mock Step 2"));
+        mockRecipe.setPhotos(List.of("mockphoto1.jpg", "mockphoto2.jpg"));
+
+        return mockRecipe;
+    }
 }
