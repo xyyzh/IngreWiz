@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Register Chef</title>
+</head>
+<body>
+    <h1>Register Chef</h1>
+    <form action="#" th:action="@{/register}" th:object="${chef}" method="post">
+        <div>
+            <label for="chefName">Name:</label>
+            <input type="text" id="chefName" th:field="*{chefName}" />
+        </div>
+        <div>
+            <label for="email">Email:</label>
+            <input type="email" id="email" th:field="*{email}" />
+        </div>
+        <div>
+            <label for="preferredCuisineCategory">Preferred Cuisine Category:</label>
+            <select id="preferredCuisineCategory" th:field="*{preferredCuisineCategory}">
+                <option value="" disabled selected>Select a category</option>
+                <option th:each="category : ${categories}" th:value="${category}" th:text="${category}"></option>
+            </select>
+        </div>
+        <div>
+            <button type="submit">Register</button>
+        </div>
+    </form>
+</body>
+</html>

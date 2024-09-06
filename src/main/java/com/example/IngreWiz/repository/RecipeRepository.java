@@ -17,6 +17,6 @@ public interface RecipeRepository extends JpaRepository<Recipe, Long> {
     // Custom query method to find recipes by category
     List<Recipe> findByCategory(Category category);
 
-    // Custom query method to find recipes by name containing a keyword
-    List<Recipe> findByNameContainingIgnoreCase(String keyword);
+    // Custom query method to find recipes by name 
+    List<Recipe> findByRecipeNameContainingIgnoreCase(String recipeName);
 }

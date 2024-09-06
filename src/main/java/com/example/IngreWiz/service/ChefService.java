@@ -2,6 +2,7 @@ package com.example.IngreWiz.service;
 
 import com.example.IngreWiz.model.Chef;
 import com.example.IngreWiz.model.Recipe;
+import com.example.IngreWiz.model.Category;
 import com.example.IngreWiz.repository.ChefRepository;
 import com.example.IngreWiz.repository.RecipeRepository;
 import com.example.IngreWiz.service.RecipeService;
@@ -78,6 +79,11 @@ public class ChefService {
             // Handle the case where the chef is not found
             throw new RuntimeException("Chef not found");
         }
+    }
+
+    public Chef createChef(String chefName, String email, Category preferredCuisineCategory) {
+        Chef chef = new Chef(chefName, email, preferredCuisineCategory);
+        return chefRepository.save(chef);
     }
 }
 

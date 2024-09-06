@@ -36,7 +36,9 @@ public class Recipe {
     @ElementCollection
     private List<String> photos;
 
-
+    @ManyToOne
+    @JoinColumn(name = "chef_id")
+    private Chef chef;
 
     public Recipe(){}
 

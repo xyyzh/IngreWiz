@@ -80,6 +80,6 @@ public class RecipeService {
 
     // Find recipes by name containing a keyword
     public List<Recipe> getRecipesByName(String keyword) {
-        return recipeRepository.findByNameContainingIgnoreCase(keyword);
+        return recipeRepository.findByRecipeNameContainingIgnoreCase(keyword);
     }
 }
