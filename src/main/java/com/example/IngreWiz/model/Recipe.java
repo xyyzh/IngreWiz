@@ -1,7 +1,6 @@
 package com.example.IngreWiz.model;
 
 import java.util.List;
-
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,13 +8,12 @@ import lombok.Setter;
 @Getter
 @Setter
 @Entity
+@Table(name = "recipes") // Add table name for JDBC
 public class Recipe {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long recipeId;
-
-    private boolean isPublic;
 
     private String recipeName;
 
@@ -28,12 +26,18 @@ public class Recipe {
     private String description;
 
     @ElementCollection
+    @CollectionTable(name = "recipe_key_ingredients", joinColumns = @JoinColumn(name = "recipe_id"))
+    @Column(name = "ingredient")
     private List<String> keyIngredients;
 
     @ElementCollection
+    @CollectionTable(name = "recipe_steps", joinColumns = @JoinColumn(name = "recipe_id"))
+    @Column(name = "step")
     private List<String> steps;
 
     @ElementCollection
+    @CollectionTable(name = "recipe_photos", joinColumns = @JoinColumn(name = "recipe_id"))
+    @Column(name = "photo")
     private List<String> photos;
 
     @ManyToOne
@@ -43,7 +47,6 @@ public class Recipe {
     public Recipe(){}
 
     public Recipe(String recipeName, Category category, int servings, String description, List<String> keyIngredients, List<String> steps, List<String> photos) {
-        this.isPublic = false;
         this.recipeName = recipeName;
         this.category = category;
         this.servings = servings;
@@ -52,19 +55,4 @@ public class Recipe {
         this.steps = steps;
         this.photos = photos;
     }
-
-    /*
-    public Recipe(boolean isPublic, String recipeName, Category category, int servings, String description, List<String> keyIngredients, List<String> steps, List<String> photos) {
-        this.isPublic = isPublic;
-        this.recipeName = recipeName;
-        this.category = category;
-        this.servings = servings;
-        this.description = description;
-        this.keyIngredients = keyIngredients;
-        this.steps = steps;
-        this.photos = photos;
-    }
-
-     */
-
 }

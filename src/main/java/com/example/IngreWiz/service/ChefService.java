@@ -4,13 +4,14 @@ import com.example.IngreWiz.model.Chef;
 import com.example.IngreWiz.model.Recipe;
 import com.example.IngreWiz.model.Category;
 import com.example.IngreWiz.repository.ChefRepository;
-import com.example.IngreWiz.repository.RecipeRepository;
 import com.example.IngreWiz.service.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Service
 public class ChefService {
@@ -38,29 +39,18 @@ public class ChefService {
         Optional<Chef> optionalChef = getChefById(chefId);
         Optional<Recipe> optionalRecipe = recipeService.getRecipeById(recipeId);
 
-        if (optionalChef.isPresent() && optionalRecipe.isPresent()) {
-            Chef chef = optionalChef.get();
-            Recipe recipe = optionalRecipe.get();
-            List<Recipe> savedRecipes = chef.getSavedRecipes();
-
-            Recipe clonedPrivateRecipe = recipeService.clonePublicRecipeForUser(recipe);
-            savedRecipes.add(clonedPrivateRecipe);
-            chef.setSavedRecipes(savedRecipes);
-            chefRepository.save(chef);
-
-
-//            else if (!savedRecipes.contains(recipe)) {
-//                savedRecipes.add(recipe);
-//                chef.setSavedRecipes(savedRecipes);
-//                chefRepository.save(chef);
-//            }
-//            else{
-//                System.out.println("Recipe already saved!");
-//            }
-
-        } else {
+        if (optionalChef.isEmpty() || optionalRecipe.isEmpty()) {
             throw new RuntimeException("Chef or Recipe not found.");
         }
+
+        Chef chef = optionalChef.get();
+        Recipe recipe = optionalRecipe.get();
+
+        // Set the chef for the recipe
+        recipe.setChef(chef);
+
+        // Save the updated recipe
+        recipeService.saveRecipe(recipe);
     }
 
     public void removeRecipeFromChef(Long chefId, Recipe recipe) {
@@ -76,7 +66,6 @@ public class ChefService {
                 chefRepository.save(chef);
             }
         } else {
-            // Handle the case where the chef is not found
             throw new RuntimeException("Chef not found");
         }
     }
@@ -84,6 +73,19 @@ public class ChefService {
     public Chef createChef(String chefName, String email, Category preferredCuisineCategory) {
         Chef chef = new Chef(chefName, email, preferredCuisineCategory);
         return chefRepository.save(chef);
+    }
+
+    public Optional<Chef> getChefByName(String name) {
+        return chefRepository.findByChefName(name);
+    }
+
+    //chefRepository.findAll() returns an Iterable<Chef>, not a List<Chef>. 
+    //resolve this by converting the Iterable to a List.
+
+    public List<Chef> getAllChefs() {
+        Iterable<Chef> iterable = chefRepository.findAll();
+        return StreamSupport.stream(iterable.spliterator(), false)
+                            .collect(Collectors.toList());
     }
 }
 

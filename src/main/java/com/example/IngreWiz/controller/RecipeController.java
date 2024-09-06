@@ -2,6 +2,7 @@ package com.example.IngreWiz.controller;
 
 import com.example.IngreWiz.model.Recipe;
 import com.example.IngreWiz.service.RecipeService;
+import com.example.IngreWiz.model.Category;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,16 +21,6 @@ public class RecipeController {
 
     private static final Logger logger = LoggerFactory.getLogger(RecipeController.class);
 
-    @PostMapping("/{recipeId}/clone")
-    public Recipe cloneAndModifyRecipe(@PathVariable Long recipeId, @RequestBody Recipe modifiedRecipe) {
-        Recipe userRecipe = recipeService.clonePublicRecipeForUser(recipeId);
-
-        userRecipe.setRecipeName(modifiedRecipe.getRecipeName());
-        userRecipe.setCategory(modifiedRecipe.getCategory());
-        userRecipe.setDescription(modifiedRecipe.getDescription());
-
-        return recipeService.saveRecipe(userRecipe);
-    }
 
     @GetMapping
     public List<Recipe> getAllRecipes() {
@@ -79,7 +70,7 @@ public class RecipeController {
     public Recipe getMockRecipe() {
         Recipe mockRecipe = new Recipe();
         mockRecipe.setRecipeName("Mock Recipe");
-        mockRecipe.setCategory("Mock Category");
+        mockRecipe.setCategory(Category.JAPANESE);
         mockRecipe.setServings(4);
         mockRecipe.setDescription("This is a mock recipe for testing purposes.");
         mockRecipe.setKeyIngredients(List.of("Mock Ingredient 1", "Mock Ingredient 2"));

@@ -3,6 +3,8 @@ package com.example.IngreWiz;
 import com.example.IngreWiz.model.Category;
 import com.example.IngreWiz.model.Chef;
 import com.example.IngreWiz.model.Recipe;
+import com.example.IngreWiz.service.DatabaseService;
+
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
@@ -16,10 +18,11 @@ public class IngreWizApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(IngreWizApplication.class, args);
+		DatabaseService.initializeDatabase(); 
 
-		testRecipes();
-		testChefs();
-		testSetters();
+		//testRecipes();
+		//testChefs();
+		//testSetters();
 
 		//System.out.println("Tests completed. Exiting application.");
 		//System.exit(0);
