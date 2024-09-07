@@ -9,7 +9,6 @@ import com.example.IngreWiz.repository.ChefRepository;
 import com.example.IngreWiz.repository.RecipeRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,7 +43,7 @@ public class ServiceTest {
         chef.setPhoneNumber("1234567890");
         
 
-        Chef savedChef = chefService.saveChef(chef);
+        Chef savedChef = chefService.addChef(chef);
 
         Optional<Chef> foundChef = chefRepository.findById(savedChef.getId());
         assertThat(foundChef).isPresent();
@@ -59,7 +58,7 @@ public class ServiceTest {
         chef.setPreferredCuisineCategory(Category.ITALIAN);
         chef.setPhoneNumber("1234567890");
 
-        Chef savedChef = chefService.saveChef(chef);
+        Chef savedChef = chefService.addChef(chef);
 
         Recipe recipe = new Recipe();
         recipe.setRecipeName("Beef Wellington");
@@ -71,7 +70,7 @@ public class ServiceTest {
         recipe.setServings(4);
         recipe.setChef(savedChef);
 
-        Recipe savedRecipe = recipeService.saveRecipe(recipe);
+        Recipe savedRecipe = recipeService.addRecipe(recipe);
 
         Optional<Recipe> foundRecipe = recipeRepository.findById(savedRecipe.getRecipeId());
         assertThat(foundRecipe).isPresent();

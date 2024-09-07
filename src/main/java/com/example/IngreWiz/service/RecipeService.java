@@ -27,9 +27,9 @@ public class RecipeService {
         return recipeRepository.findById(id);
     }
 
-    // Save a new recipe or update an existing one
-    public Recipe saveRecipe(Recipe recipe) {
-        return recipeRepository.save(recipe);
+    // Save a new recipe 
+    public Recipe addRecipe(Recipe recipe) {
+        return recipeRepository.addRecipe(recipe);
     }
 
     public void deleteRecipe(Long id) {

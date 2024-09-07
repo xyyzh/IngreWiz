@@ -4,7 +4,6 @@ import com.example.IngreWiz.model.Chef;
 import com.example.IngreWiz.model.Recipe;
 import com.example.IngreWiz.model.Category;
 import com.example.IngreWiz.repository.ChefRepository;
-import com.example.IngreWiz.service.RecipeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,8 +30,8 @@ public class ChefService {
         return chefRepository.findById(id);
     }
 
-    public Chef saveChef(Chef chef) {
-        return chefRepository.save(chef);
+    public Chef addChef(Chef chef) {
+        return chefRepository.addChef(chef);
     }
 
     public void addRecipeToChef(Long chefId, Long recipeId) {
@@ -50,7 +49,7 @@ public class ChefService {
         recipe.setChef(chef);
 
         // Save the updated recipe
-        recipeService.saveRecipe(recipe);
+        recipeService.addRecipe(recipe);
     }
 
     public void removeRecipeFromChef(Long chefId, Recipe recipe) {
@@ -63,7 +62,7 @@ public class ChefService {
             if (savedRecipes.contains(recipe)) {
                 savedRecipes.remove(recipe);
                 chef.setSavedRecipes(savedRecipes);
-                chefRepository.save(chef);
+                chefRepository.addChef(chef);
             }
         } else {
             throw new RuntimeException("Chef not found");
@@ -72,7 +71,8 @@ public class ChefService {
 
     public Chef createChef(String chefName, String email, Category preferredCuisineCategory) {
         Chef chef = new Chef(chefName, email, preferredCuisineCategory);
-        return chefRepository.save(chef);
+        chefRepository.addChef(chef);
+        return chef;
     }
 
     public Optional<Chef> getChefByName(String name) {

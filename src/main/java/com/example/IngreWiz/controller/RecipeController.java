@@ -36,7 +36,7 @@ public class RecipeController {
     // POST /api/recipes - Create a new recipe
     @PostMapping
     public Recipe createRecipe(@RequestBody Recipe recipe) {
-        return recipeService.saveRecipe(recipe);
+        return recipeService.addRecipe(recipe);
     }
 
     // PUT /api/recipes/{id} - Update an existing recipe
@@ -52,7 +52,7 @@ public class RecipeController {
             existingRecipe.setKeyIngredients(recipe.getKeyIngredients());
             existingRecipe.setSteps(recipe.getSteps());
             existingRecipe.setPhotos(recipe.getPhotos());
-            return recipeService.saveRecipe(existingRecipe);
+            return recipeService.addRecipe(existingRecipe);
         } else {
             logger.warn("No recipe is updated");
             return null;
