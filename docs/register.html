@@ -85,24 +85,33 @@
             box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3);
         }
     </style>
+    <script>
+        function redirectToSuccess(event) {
+            event.preventDefault();
+            window.location.href = 'success.html';
+        }
+    </script>
 </head>
 <body>
     <div class="container">
         <h1>Register Chef</h1>
-        <form action="#" th:action="@{/register}" th:object="${chef}" method="post">
+        <form onsubmit="redirectToSuccess(event)">
             <div class="form-group">
                 <label for="chefName">Name:</label>
-                <input type="text" id="chefName" th:field="*{chefName}" />
+                <input type="text" id="chefName" name="chefName" required />
             </div>
             <div class="form-group">
                 <label for="email">Email:</label>
-                <input type="email" id="email" th:field="*{email}" />
+                <input type="email" id="email" name="email" required />
             </div>
             <div class="form-group">
                 <label for="preferredCuisineCategory">Preferred Cuisine Category:</label>
-                <select id="preferredCuisineCategory" th:field="*{preferredCuisineCategory}">
+                <select id="preferredCuisineCategory" name="preferredCuisineCategory" required>
                     <option value="" disabled selected>Select a category</option>
-                    <option th:each="category : ${categories}" th:value="${category}" th:text="${category}"></option>
+                    <option value="ITALIAN">Italian</option>
+                    <option value="INDIAN">Indian</option>
+                    <option value="MEXICAN">Mexican</option>
+                    <option value="FRENCH">French</option>
                 </select>
             </div>
             <div class="form-group">
