@@ -31,6 +31,6 @@ public class ChefController {
     @PostMapping("/register")
     public String registerChef(@ModelAttribute Chef chef) {
         chefService.createChef(chef.getChefName(), chef.getEmail(), chef.getPreferredCuisineCategory());
-        return "redirect:/";
+        return "success";
     }
 }

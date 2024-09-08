@@ -30,11 +30,17 @@ public class ChefRepository {
         String sql = "SELECT * FROM chef WHERE id = ?";
         List<Chef> chefs = jdbcTemplate.query(sql, ps -> ps.setLong(1, id), new ChefRowMapper());
         return chefs.isEmpty() ? Optional.empty() : Optional.of(chefs.get(0));
+    }   
+
+    public Optional<Chef> findByEmail(String email) {
+        String sql = "SELECT * FROM chef WHERE email = ?";
+        List<Chef> chefs = jdbcTemplate.query(sql, ps -> ps.setString(1, email), new ChefRowMapper());
+        return chefs.isEmpty() ? Optional.empty() : Optional.of(chefs.get(0));
     }
 
     public Chef addChef(Chef chef) {
-        if (findById(chef.getId()).isPresent()) {
-            throw new IllegalArgumentException("Chef with the same name or email already exists");
+        if (findByEmail(chef.getEmail()).isPresent()) {
+            throw new IllegalArgumentException("Chef with the same email already exists");
         }
         String sql = "INSERT INTO chef (name, email, category) VALUES (?, ?, ?)";
         jdbcTemplate.update(sql, chef.getChefName(), chef.getEmail(), chef.getPreferredCuisineCategory().name());
