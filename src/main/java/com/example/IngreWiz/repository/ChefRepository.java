@@ -1,11 +1,16 @@
 package com.example.IngreWiz.repository;
 
 import com.example.IngreWiz.model.Chef;
+import com.example.IngreWiz.model.Category;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import org.springframework.lang.NonNull;
 
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
@@ -38,12 +43,35 @@ public class ChefRepository {
         return chefs.isEmpty() ? Optional.empty() : Optional.of(chefs.get(0));
     }
 
+    // public Chef addChef(Chef chef) {
+    //     if (findByEmail(chef.getEmail()).isPresent()) {
+    //         throw new IllegalArgumentException("Chef with the same email already exists");
+    //     }
+    //     String sql = "INSERT INTO chef (name, email, category) VALUES (?, ?, ?)";
+    //     jdbcTemplate.update(sql, chef.getChefName(), chef.getEmail(), chef.getPreferredCuisineCategory().name());
+    //     return chef;
+    // }
+
     public Chef addChef(Chef chef) {
-        if (findByEmail(chef.getEmail()).isPresent()) {
-            throw new IllegalArgumentException("Chef with the same email already exists");
-        }
         String sql = "INSERT INTO chef (name, email, category) VALUES (?, ?, ?)";
-        jdbcTemplate.update(sql, chef.getChefName(), chef.getEmail(), chef.getPreferredCuisineCategory().name());
+        
+        // allows to retrieve auto-generated keys immediately after the insert operation.
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
+            ps.setString(1, chef.getChefName());
+            ps.setString(2, chef.getEmail());
+            ps.setString(3, chef.getPreferredCuisineCategory().name());
+            return ps;
+        }, keyHolder);
+
+        if (keyHolder.getKey() != null) {
+            chef.setId(keyHolder.getKey().longValue());
+            System.out.println("Generated ID: " + keyHolder.getKey().longValue()); // Debug statement
+        } else {
+            System.out.println("KeyHolder is null"); // Debug statement
+        }
         return chef;
     }
 
@@ -66,7 +94,11 @@ public class ChefRepository {
         public Chef mapRow(@NonNull ResultSet rs, int rowNum) throws SQLException {
             Chef chef = new Chef();
             chef.setId(rs.getLong("id"));
-            // Map other fields as necessary
+            chef.setChefName(rs.getString("name"));
+            chef.setEmail(rs.getString("email"));
+            chef.setPreferredCuisineCategory(Category.valueOf(rs.getString("category")));
+            chef.setPhoneNumber(rs.getString("phoneNumber"));
+            chef.setProfilePictureUrl(rs.getString("profilePictureUrl"));
             return chef;
         }
     }

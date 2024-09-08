@@ -87,5 +87,18 @@ public class ChefService {
         return StreamSupport.stream(iterable.spliterator(), false)
                             .collect(Collectors.toList());
     }
+
+    public void updateChefProfile(Long id, String phoneNumber, String profilePictureUrl) {
+        Optional<Chef> optionalChef = getChefById(id);
+
+        if (optionalChef.isPresent()) {
+            Chef chef = optionalChef.get();
+            chef.setPhoneNumber(phoneNumber);
+            chef.setProfilePictureUrl(profilePictureUrl);
+            chefRepository.updateChef(chef);
+        } else {
+            throw new RuntimeException("Chef not found");
+        }
+    }
 }
 

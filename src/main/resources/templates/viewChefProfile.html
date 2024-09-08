@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Home</title>
+    <title>Chef Profile</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -19,7 +19,7 @@
             padding: 30px 50px;
             border-radius: 12px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
-            text-align: center;
+            text-align: left;
             max-width: 600px;
             width: 100%;
         }
@@ -27,14 +27,25 @@
         h1 {
             color: #333333;
             margin-bottom: 20px;
+            text-align: center;
         }
 
-        p {
-            color: #666666;
-            margin-bottom: 30px;
+        .profile-item {
+            margin-bottom: 15px;
         }
 
-        .button {
+        .profile-item label {
+            font-weight: bold;
+            color: #555555;
+        }
+
+        .profile-item span {
+            display: block;
+            color: #333333;
+            margin-top: 5px;
+        }
+
+        .button, .link {
             display: inline-block;
             padding: 12px 25px;
             font-size: 16px;
@@ -49,26 +60,26 @@
             border-radius: 5px;
             box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3);
             transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+            margin-top: 20px;
         }
 
-        .button:hover {
+        .button:hover, .link:hover {
             background-color: #0056b3;
             box-shadow: 0 6px 8px rgba(0, 123, 255, 0.4);
         }
 
-        .button:active {
+        .button:active, .link:active {
             background-color: #004494;
             transform: translateY(2px);
             box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3);
         }
 
         .link {
-            display: inline-block;
-            margin-top: 20px;
-            font-size: 16px;
+            background-color: transparent;
             color: #007bff;
             text-decoration: none;
-            transition: color 0.3s;
+            padding: 0;
+            box-shadow: none;
         }
 
         .link:hover {
@@ -78,11 +89,33 @@
 </head>
 <body>
     <div class="container">
-        <h1>Welcome to IngreWiz</h1>
-        <p>Your one-stop solution for managing recipes! </p>
-        <a href="/register" class="button">Sign up</a>
-        <br>
-        <a href="/login" class="link">Already have an account? Log in</a>
+        <h1>Chef Profile</h1>
+        <div class="profile-item">
+            <label>Name:</label>
+            <span th:text="${chef.chefName}"></span>
+        </div>
+        <div class="profile-item">
+            <label>Email:</label>
+            <span th:text="${chef.email}"></span>
+        </div>
+        <div class="profile-item">
+            <label>Preferred Cuisine Category:</label>
+            <span th:text="${chef.preferredCuisineCategory}"></span>
+        </div>
+        <div class="profile-item">
+            <label>Phone Number:</label>
+            <span th:text="${chef.phoneNumber}"></span>
+        </div>
+        <div class="profile-item">
+            <label>Profile Picture:</label>
+            <span th:text="${chef.profilePictureUrl}"></span>
+        </div>
+        <div>
+            <a th:href="@{/chef/{id}/edit(id=${chef.id})}" class="button">Edit Profile</a>
+        </div>
+        <div>
+            <a th:href="@{/}" class="link">Back to Home</a>
+        </div>
     </div>
 </body>
 </html>

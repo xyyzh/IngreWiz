@@ -44,6 +44,7 @@
             border-radius: 5px;
             box-shadow: 0 4px #999;
             transition: background-color 0.3s, transform 0.3s;
+            margin-top: 20px;
         }
 
         .button:hover {
@@ -62,6 +63,7 @@
         <h1>Registration Successful</h1>
         <p>Thank you for signing up!</p>
         <a href="/" class="button">Return to Home</a>
+        <a th:href="@{/chef/{id}/profile(id=${chef.id})}" class="button">View Profile</a>
     </div>
 </body>
 </html>
