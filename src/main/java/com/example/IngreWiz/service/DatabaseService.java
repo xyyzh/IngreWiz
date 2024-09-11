@@ -16,8 +16,8 @@ public class DatabaseService {
                                   "NAME TEXT NOT NULL," +
                                   "EMAIL TEXT NOT NULL," +
                                   "CATEGORY TEXT NOT NULL," +
-                                  "PHONENUMBER TEXT," +
-                                  "PROFILEPICTUREURL TEXT)";
+                                  "PHONE_NUMBER TEXT," +
+                                  "PROFILE_PICTURE_URL TEXT)";
             stmt.execute(chefTableSql);
 
             String recipeTableSql = "CREATE TABLE IF NOT EXISTS recipe (" +
@@ -29,7 +29,7 @@ public class DatabaseService {
                                     "INGREDIENTS TEXT NOT NULL," +
                                     "STEPS TEXT NOT NULL," +
                                     "CHEF_ID INTEGER," +
-                                    "FOREIGN KEY (CHEF_ID) REFERENCES chefs(ID) ON DELETE CASCADE)";
+                                    "FOREIGN KEY (CHEF_ID) REFERENCES chef(ID) ON DELETE CASCADE)";
             stmt.execute(recipeTableSql);
         } catch (SQLException e) {
             e.printStackTrace();

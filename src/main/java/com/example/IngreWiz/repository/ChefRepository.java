@@ -43,14 +43,6 @@ public class ChefRepository {
         return chefs.isEmpty() ? Optional.empty() : Optional.of(chefs.get(0));
     }
 
-    // public Chef addChef(Chef chef) {
-    //     if (findByEmail(chef.getEmail()).isPresent()) {
-    //         throw new IllegalArgumentException("Chef with the same email already exists");
-    //     }
-    //     String sql = "INSERT INTO chef (name, email, category) VALUES (?, ?, ?)";
-    //     jdbcTemplate.update(sql, chef.getChefName(), chef.getEmail(), chef.getPreferredCuisineCategory().name());
-    //     return chef;
-    // }
 
     public Chef addChef(Chef chef) {
         String sql = "INSERT INTO chef (name, email, category) VALUES (?, ?, ?)";
@@ -79,7 +71,7 @@ public class ChefRepository {
         if (!findById(chef.getId()).isPresent()) {
             throw new IllegalArgumentException("Chef does not exist");
         }
-        String sql = "UPDATE chef SET phoneNumber = ?, profilePictureUrl = ? WHERE id = ?";
+        String sql = "UPDATE chef SET phone_number = ?, profile_picture_url = ? WHERE id = ?";
         jdbcTemplate.update(sql, chef.getPhoneNumber(), chef.getProfilePictureUrl(), chef.getId());
     }
 
@@ -97,8 +89,8 @@ public class ChefRepository {
             chef.setChefName(rs.getString("name"));
             chef.setEmail(rs.getString("email"));
             chef.setPreferredCuisineCategory(Category.valueOf(rs.getString("category")));
-            chef.setPhoneNumber(rs.getString("phoneNumber"));
-            chef.setProfilePictureUrl(rs.getString("profilePictureUrl"));
+            chef.setPhoneNumber(rs.getString("phone_number"));
+            chef.setProfilePictureUrl(rs.getString("profile_picture_url"));
             return chef;
         }
     }

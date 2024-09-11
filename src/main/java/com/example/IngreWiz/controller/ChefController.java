@@ -37,7 +37,7 @@ public class ChefController {
     @GetMapping("/register")
     public String registerForm(Model model) {
         model.addAttribute("chef", new Chef());
-        model.addAttribute("categories", Category.values()); // Add this line
+        model.addAttribute("categories", Category.values()); 
         return "register";
     }
 
@@ -66,18 +66,6 @@ public class ChefController {
         return "viewChefProfile";
     }
 
-    @GetMapping("/chef/{id}/edit")
-    public String editChefForm(@PathVariable Long id, Model model) {
-        Optional<Chef> chef = chefService.getChefById(id);
-        model.addAttribute("chef", chef.get());
-        return "editChef";
-    }
-
-    @PostMapping("/chef/{id}/update")
-    public String updateChef(@PathVariable Long id, @ModelAttribute Chef chef) {
-        chefService.updateChefProfile(id, chef.getPhoneNumber(), chef.getProfilePictureUrl());
-        return "redirect:/chef/" + id + "/edit?success";
-    }
 
     @PostMapping("/validate")
     @ResponseBody
@@ -87,6 +75,32 @@ public class ChefController {
             return ResponseEntity.ok(true);
         } else {
             return ResponseEntity.ok(false);
+        }
+    }
+
+    @GetMapping("/chef/{id}/update")
+    public String showUpdateForm(@PathVariable Long id, Model model) {
+        Optional<Chef> chef = chefService.getChefById(id);
+        if (chef.isPresent()) {
+            model.addAttribute("chef", chef.get());
+            return "updateChefProfile";
+        } else {
+            throw new IllegalArgumentException("Chef not found");
+        }
+    }
+
+    @PostMapping("/chef/{id}/update")
+    public String updateChefProfile(@PathVariable Long id, @RequestParam String phoneNumber, @RequestParam String profilePictureUrl, Model model) {
+        Optional<Chef> chefOptional = chefService.getChefById(id);
+        if (chefOptional.isPresent()) {
+            Chef chef = chefOptional.get();
+            chef.setPhoneNumber(phoneNumber);
+            chef.setProfilePictureUrl(profilePictureUrl);
+            chefService.updateChefProfile(id, phoneNumber, profilePictureUrl);
+            model.addAttribute("chef", chef);
+            return "redirect:/chef/" + id + "/profile";
+        } else {
+            throw new IllegalArgumentException("Chef not found");
         }
     }
 }
