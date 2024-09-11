@@ -91,6 +91,10 @@
     <div class="container">
         <h1>Chef Profile</h1>
         <div class="profile-item">
+            <label>User ID (Please remember this for future reference):</label>
+            <span th:text="${chef.id}"></span>
+        </div>
+        <div class="profile-item">
             <label>Name:</label>
             <span th:text="${chef.chefName}"></span>
         </div>
@@ -113,8 +117,9 @@
         <div>
             <a th:href="@{/chef/{id}/edit(id=${chef.id})}" class="button">Edit Profile</a>
         </div>
+
         <div>
-            <a th:href="@{/}" class="link">Back to Home</a>
+            <a href="/" class="button">Return to Home</a>
         </div>
     </div>
 </body>

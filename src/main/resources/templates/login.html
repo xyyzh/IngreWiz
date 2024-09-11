@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <title>Register Chef</title>
+    <title>Login</title>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -20,7 +20,7 @@
             border-radius: 12px;
             box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
             text-align: center;
-            max-width: 600px;
+            max-width: 400px;
             width: 100%;
         }
 
@@ -48,8 +48,7 @@
         }
 
         input[type="text"],
-        input[type="email"],
-        select {
+        input[type="number"] {
             width: 100%;
             padding: 10px;
             border: 1px solid #cccccc;
@@ -72,6 +71,7 @@
             border-radius: 5px;
             box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3);
             transition: background-color 0.3s, transform 0.3s, box-shadow 0.3s;
+            margin-top: 20px;
         }
 
         .button:hover {
@@ -85,28 +85,50 @@
             box-shadow: 0 4px 6px rgba(0, 123, 255, 0.3);
         }
     </style>
+    <script>
+        async function redirectToProfile(event) {
+            event.preventDefault();
+            const id = document.getElementById('id').value;
+            const chefName = document.getElementById('chefName').value;
+            if (id && chefName) {
+                //The await keyword pauses the execution of the function until the fetch request completes and returns a response.
+                const response = await fetch('/validate', {
+                    method: 'POST',
+                    //the request body will be URL-encoded form data
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({
+                        id: id,
+                        chefName: chefName
+                    })
+                });
+                const isValid = await response.json();
+                if (isValid) {
+                    window.location.href = `/chef/${id}/profile`;
+                } else {
+                    alert('Invalid User ID or Name.');
+                }
+            } else {
+                alert('Please enter both User ID and Name.');
+            }
+        }
+    </script>
 </head>
 <body>
     <div class="container">
-        <h1>Register Chef</h1>
-        <form action="#" th:action="@{/register}" th:object="${chef}" method="post">
+        <h1>Login</h1>
+        <form onsubmit="redirectToProfile(event)">
+            <div class="form-group">
+                <label for="id">User ID:</label>
+                <input type="number" id="id" name="id" required />
+            </div>
             <div class="form-group">
                 <label for="chefName">Username:</label>
-                <input type="text" id="chefName" th:field="*{chefName}" />
+                <input type="text" id="chefName" name="chefName" required />
             </div>
             <div class="form-group">
-                <label for="email">Email:</label>
-                <input type="email" id="email" th:field="*{email}" />
-            </div>
-            <div class="form-group">
-                <label for="preferredCuisineCategory">Your Favorite Cuisine Category:</label>
-                <select id="preferredCuisineCategory" th:field="*{preferredCuisineCategory}">
-                    <option value="" disabled selected>Select a category</option>
-                    <option th:each="category : ${categories}" th:value="${category}" th:text="${category}"></option>
-                </select>
-            </div>
-            <div class="form-group">
-                <button type="submit" class="button">Register</button>
+                <button type="submit" class="button">Access My Profile</button>
             </div>
         </form>
     </div>

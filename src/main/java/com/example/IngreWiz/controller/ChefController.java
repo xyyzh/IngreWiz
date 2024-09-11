@@ -13,7 +13,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import java.util.Optional;
 import com.example.IngreWiz.repository.ChefRepository;
-import com.example.IngreWiz.service.ChefService;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.bind.annotation.RequestBody;
+
+
 
 
 
@@ -44,6 +49,12 @@ public class ChefController {
         return "success";
     }
 
+    @GetMapping("/login")
+    public String loginForm(Model model) {
+        model.addAttribute("chef", new Chef());
+        return "login";
+    }
+
     @GetMapping("/chef/{id}/profile")
     public String viewChefProfile(@PathVariable Long id, Model model) {
         Optional<Chef> chef = chefService.getChefById(id);
@@ -66,5 +77,16 @@ public class ChefController {
     public String updateChef(@PathVariable Long id, @ModelAttribute Chef chef) {
         chefService.updateChefProfile(id, chef.getPhoneNumber(), chef.getProfilePictureUrl());
         return "redirect:/chef/" + id + "/edit?success";
+    }
+
+    @PostMapping("/validate")
+    @ResponseBody
+    public ResponseEntity<Boolean> validateChef(@RequestParam Long id, @RequestParam String chefName) {
+        Optional<Chef> chef = chefService.getChefById(id);
+        if (chef.isPresent() && chef.get().getChefName().equals(chefName)) {
+            return ResponseEntity.ok(true);
+        } else {
+            return ResponseEntity.ok(false);
+        }
     }
 }
