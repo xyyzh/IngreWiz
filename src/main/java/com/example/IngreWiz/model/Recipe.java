@@ -27,7 +27,7 @@ public class Recipe {
 
     private List<String> photos;
 
-    private Chef chef;
+    private Long chefId;
 
     public Recipe(){}
 

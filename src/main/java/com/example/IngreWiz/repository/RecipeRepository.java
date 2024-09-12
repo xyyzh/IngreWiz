@@ -12,6 +12,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Arrays;
+
+
 @Repository
 public class RecipeRepository {
 
@@ -39,15 +42,35 @@ public class RecipeRepository {
         return recipes.isEmpty() ? Optional.empty() : Optional.of(recipes.get(0));
     }
 
-    public Recipe addRecipe(Recipe recipe) {
-        String sql = "INSERT INTO recipe (name, description, category, servings, ingredients, steps) VALUES (?, ?, ?, ?, ?, ?)";
+    public List<Recipe> findAllRecipesByChefId(Long chefId) {
+        String sql = "SELECT * FROM recipe WHERE chef_id = ?";
+        return jdbcTemplate.query(sql, ps -> ps.setLong(1, chefId), new RecipeRowMapper());
+    }
+
+    public Recipe addRecipe(Recipe recipe, Long chefId) {
+        String sql = "INSERT INTO recipe (name, description, category, servings, ingredients, steps, chef_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
         jdbcTemplate.update(sql, ps -> {
             ps.setString(1, recipe.getRecipeName());
             ps.setString(2, recipe.getDescription());
             ps.setString(3, recipe.getCategory().name());
             ps.setInt(4, recipe.getServings());
-            ps.setString(5, String.join(",", recipe.getKeyIngredients()));
+            ps.setString(5, String.join(", ", recipe.getKeyIngredients()));
             ps.setString(6, String.join("\n", recipe.getSteps()));
+            ps.setLong(7, chefId);
+        });
+        return recipe;
+    }
+
+    public Recipe updateRecipe(Recipe recipe) {
+        String sql = "UPDATE recipe SET name = ?, description = ?, category = ?, servings = ?, ingredients = ?, steps = ? WHERE id = ?";
+        jdbcTemplate.update(sql, ps -> {
+            ps.setString(1, recipe.getRecipeName());
+            ps.setString(2, recipe.getDescription());
+            ps.setString(3, recipe.getCategory().name());
+            ps.setInt(4, recipe.getServings());
+            ps.setString(5, String.join(", ", recipe.getKeyIngredients()));
+            ps.setString(6, String.join("\n", recipe.getSteps()));
+            ps.setLong(7, recipe.getRecipeId());
         });
         return recipe;
     }
@@ -66,10 +89,14 @@ public class RecipeRepository {
         @Override
         public Recipe mapRow(@NonNull ResultSet rs, int rowNum) throws SQLException {
             Recipe recipe = new Recipe();
-            recipe.setRecipeId(rs.getLong("recipe_id"));
-            recipe.setRecipeName(rs.getString("recipe_name"));
+            recipe.setRecipeId(rs.getLong("id"));
+            recipe.setRecipeName(rs.getString("name"));
             recipe.setCategory(Category.valueOf(rs.getString("category")));
-            // Map other fields as necessary
+            recipe.setServings(rs.getInt("servings"));
+            recipe.setDescription(rs.getString("description"));
+            recipe.setKeyIngredients(Arrays.asList(rs.getString("ingredients").split(",")));
+            recipe.setSteps(Arrays.asList(rs.getString("steps").split("\n")));
+            recipe.setChefId(rs.getLong("chef_id"));
             return recipe;
         }
     }

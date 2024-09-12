@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import com.example.IngreWiz.service.ChefService;
 import com.example.IngreWiz.model.Chef;
 import com.example.IngreWiz.model.Category; 
+import com.example.IngreWiz.model.Recipe;
+import com.example.IngreWiz.service.RecipeService;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
 import java.util.Optional;
@@ -20,14 +22,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 
 
-
-
-
 @Controller
 public class ChefController {
 
     @Autowired
     private ChefService chefService;
+
+    @Autowired
+    private RecipeService recipeService;
 
     @GetMapping("/")
     public String home() {
@@ -55,9 +57,9 @@ public class ChefController {
         return "login";
     }
 
-    @GetMapping("/chef/{id}/profile")
-    public String viewChefProfile(@PathVariable Long id, Model model) {
-        Optional<Chef> chef = chefService.getChefById(id);
+    @GetMapping("/chef/{chefId}/profile")
+    public String viewChefProfile(@PathVariable Long chefId, Model model) {
+        Optional<Chef> chef = chefService.getChefById(chefId);
         if (chef.isPresent()) {
             model.addAttribute("chef", chef.get());
         } else {
@@ -78,9 +80,9 @@ public class ChefController {
         }
     }
 
-    @GetMapping("/chef/{id}/update")
-    public String showUpdateForm(@PathVariable Long id, Model model) {
-        Optional<Chef> chef = chefService.getChefById(id);
+    @GetMapping("/chef/{chefId}/update")
+    public String showUpdateForm(@PathVariable Long chefId, Model model) {
+        Optional<Chef> chef = chefService.getChefById(chefId);
         if (chef.isPresent()) {
             model.addAttribute("chef", chef.get());
             return "updateChefProfile";
@@ -89,18 +91,19 @@ public class ChefController {
         }
     }
 
-    @PostMapping("/chef/{id}/update")
-    public String updateChefProfile(@PathVariable Long id, @RequestParam String phoneNumber, @RequestParam String profilePictureUrl, Model model) {
-        Optional<Chef> chefOptional = chefService.getChefById(id);
+    @PostMapping("/chef/{chefId}/update")
+    public String updateChefProfile(@PathVariable Long chefId, @RequestParam String phoneNumber, @RequestParam String profilePictureUrl, Model model) {
+        Optional<Chef> chefOptional = chefService.getChefById(chefId);
         if (chefOptional.isPresent()) {
             Chef chef = chefOptional.get();
             chef.setPhoneNumber(phoneNumber);
             chef.setProfilePictureUrl(profilePictureUrl);
-            chefService.updateChefProfile(id, phoneNumber, profilePictureUrl);
+            chefService.updateChefProfile(chefId, phoneNumber, profilePictureUrl);
             model.addAttribute("chef", chef);
-            return "redirect:/chef/" + id + "/profile";
+            return "redirect:/chef/" + chefId + "/profile";
         } else {
             throw new IllegalArgumentException("Chef not found");
         }
     }
+
 }

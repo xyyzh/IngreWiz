@@ -28,7 +28,7 @@ public class DatabaseService {
                                     "DESCRIPTION TEXT NOT NULL," +
                                     "INGREDIENTS TEXT NOT NULL," +
                                     "STEPS TEXT NOT NULL," +
-                                    "CHEF_ID INTEGER," +
+                                    "CHEF_ID INTEGER NOT NULL," +
                                     "FOREIGN KEY (CHEF_ID) REFERENCES chef(ID) ON DELETE CASCADE)";
             stmt.execute(recipeTableSql);
         } catch (SQLException e) {

@@ -34,23 +34,23 @@ public class ChefService {
         return chefRepository.addChef(chef);
     }
 
-    public void addRecipeToChef(Long chefId, Long recipeId) {
-        Optional<Chef> optionalChef = getChefById(chefId);
-        Optional<Recipe> optionalRecipe = recipeService.getRecipeById(recipeId);
+    // public void addRecipeToChef(Long chefId, Long recipeId) {
+    //     Optional<Chef> optionalChef = getChefById(chefId);
+    //     Optional<Recipe> optionalRecipe = recipeService.getRecipeById(recipeId);
 
-        if (optionalChef.isEmpty() || optionalRecipe.isEmpty()) {
-            throw new RuntimeException("Chef or Recipe not found.");
-        }
+    //     if (optionalChef.isEmpty() || optionalRecipe.isEmpty()) {
+    //         throw new RuntimeException("Chef or Recipe not found.");
+    //     }
 
-        Chef chef = optionalChef.get();
-        Recipe recipe = optionalRecipe.get();
+    //     Chef chef = optionalChef.get();
+    //     Recipe recipe = optionalRecipe.get();
 
-        // Set the chef for the recipe
-        recipe.setChef(chef);
+    //     // Set the chef for the recipe
+    //     recipe.setChef(chef);
 
-        // Save the updated recipe
-        recipeService.addRecipe(recipe);
-    }
+    //     // Save the updated recipe
+    //     recipeService.addRecipe(recipe);
+    // }
 
     public void removeRecipeFromChef(Long chefId, Recipe recipe) {
         Optional<Chef> optionalChef = chefRepository.findById(chefId);

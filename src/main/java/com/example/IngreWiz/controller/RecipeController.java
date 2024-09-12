@@ -1,48 +1,112 @@
 package com.example.IngreWiz.controller;
 
 import com.example.IngreWiz.model.Recipe;
+import com.example.IngreWiz.service.ChefService;
 import com.example.IngreWiz.service.RecipeService;
 import com.example.IngreWiz.model.Category;
+import com.example.IngreWiz.model.Chef;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Optional;
 
-
-@RestController
-@RequestMapping("/api/recipes")
+@Controller
+@RequestMapping("/chef/{chefId}/profile/recipes")
 public class RecipeController {
 
     @Autowired
     private RecipeService recipeService;
 
+    @Autowired
+    private ChefService chefService;
+
     private static final Logger logger = LoggerFactory.getLogger(RecipeController.class);
 
-
+    // GET /chef/{chefId}/profile/recipes - Get all recipes by chef ID
     @GetMapping
-    public List<Recipe> getAllRecipes() {
-        return recipeService.getAllRecipes();
+    public String getAllRecipesByChefId(@PathVariable Long chefId, Model model) {
+        logger.info("Fetching recipes for chef with ID: " + chefId);
+        List<Recipe> recipes = recipeService.getRecipesByChefId(chefId);
+        if (recipes.isEmpty()) {
+            logger.warn("No recipes found for chef with ID: " + chefId);
+        } else {
+            logger.info("Found " + recipes.size() + " recipes for chef with ID: " + chefId);
+        }
+        model.addAttribute("recipes", recipes);
+        model.addAttribute("chefId", chefId);
+        return "recipes";
     }
 
-    // GET /api/recipes/{id} - Get recipe by ID
-    @GetMapping("/{id}")
-    public Optional<Recipe> getRecipeById(@PathVariable Long id) {
-        return recipeService.getRecipeById(id);
+    // GET /chef/{chefId}/profile/recipes/{recipeId} - Get recipe by ID
+    @GetMapping("/{recipeId}")
+    public Optional<Recipe> getRecipeById(@PathVariable Long recipeId) {
+        return recipeService.getRecipeById(recipeId);
     }
 
-    // POST /api/recipes - Create a new recipe
-    @PostMapping
-    public Recipe createRecipe(@RequestBody Recipe recipe) {
-        return recipeService.addRecipe(recipe);
+    // GET /chef/{chefId}/profile/recipes/view - View recipes by chef ID
+    @GetMapping("/view")
+    public String viewRecipes(@PathVariable Long chefId, Model model) {
+        Optional<Chef> chef = chefService.getChefById(chefId);
+        if (chef.isPresent()) {
+            List<Recipe> recipes = recipeService.getRecipesByChefId(chefId);
+            if (recipes.isEmpty()) {
+                logger.warn("No recipes found for chef with ID: " + chefId);
+            } else {
+                logger.info("Found " + recipes.size() + " recipes for chef with ID: " + chefId);
+            }
+            model.addAttribute("chef", chef.get());
+            model.addAttribute("recipes", recipes);
+            return "recipes";
+        } else {
+            throw new IllegalArgumentException("Chef not found");
+        }
     }
 
-    // PUT /api/recipes/{id} - Update an existing recipe
-    @PutMapping("/{id}")
-    public Recipe updateRecipe(@PathVariable Long id, @RequestBody Recipe recipe) {
-        Optional<Recipe> optionalRecipe = recipeService.getRecipeById(id);
+    // GET /chef/{chefId}/profile/recipes/add - Show add recipe form
+    @GetMapping("/add")
+    public String showAddRecipeForm(@PathVariable Long chefId, Model model) {
+        Optional<Chef> chef = chefService.getChefById(chefId);
+        if (chef.isPresent()) {
+            model.addAttribute("chef", chef.get());
+            model.addAttribute("recipe", new Recipe());
+            return "addRecipe";
+        } else {
+        throw new IllegalArgumentException("Chef not found");
+    }
+}
+
+    // POST /chef/{chefId}/profile/recipes/add - Add a new recipe
+    @PostMapping("/add")
+    public String addRecipe(@PathVariable Long chefId, @ModelAttribute Recipe recipe, Model model) {
+        recipeService.addRecipe(recipe, chefId);
+        model.addAttribute("chefId", chefId);
+        model.addAttribute("recipe", recipe);
+        return "addRecipeSuccess";
+    }
+
+
+    // GET /chef/{chefId}/profile/recipes/{recipeId}/update - Show update form for a recipe
+    @GetMapping("/{recipeId}/update")
+    public String showUpdateForm(@PathVariable Long recipeId, Model model) {
+        Optional<Recipe> recipe = recipeService.getRecipeById(recipeId);
+        if (recipe.isPresent()) {
+            model.addAttribute("recipe", recipe.get());
+            return "updateRecipe";
+        } else {
+            throw new IllegalArgumentException("Recipe not found");
+        }
+    }
+
+    // PUT /chef/{chefId}/profile/recipes/{recipeId} - Update an existing recipe
+    @PutMapping("/{recipeId}")
+    public Recipe updateRecipe(@RequestBody Recipe recipe, @PathVariable Long recipeId) {
+        Optional<Recipe> optionalRecipe = recipeService.getRecipeById(recipeId);
         if (optionalRecipe.isPresent()) {
             Recipe existingRecipe = optionalRecipe.get();
             existingRecipe.setRecipeName(recipe.getRecipeName());
@@ -52,20 +116,20 @@ public class RecipeController {
             existingRecipe.setKeyIngredients(recipe.getKeyIngredients());
             existingRecipe.setSteps(recipe.getSteps());
             existingRecipe.setPhotos(recipe.getPhotos());
-            return recipeService.addRecipe(existingRecipe);
+            return recipeService.updateRecipe(existingRecipe);
         } else {
             logger.warn("No recipe is updated");
             return null;
         }
     }
 
-    // DELETE /api/recipes/{id} - Delete a recipe by ID
-    @DeleteMapping("/{id}")
-    public void deleteRecipe(@PathVariable Long id) {
-        recipeService.deleteRecipe(id);
+    // DELETE /chef/{chefId}/profile/recipes/{recipeId} - Delete a recipe by ID
+    @DeleteMapping("/{recipeId}")
+    public void deleteRecipe(@PathVariable Long recipeId) {
+        recipeService.deleteRecipe(recipeId);
     }
 
-    // GET /api/recipes/mock - Mock endpoint
+    // GET /chef/{chefId}/profile/recipes/mock - Mock endpoint
     @GetMapping("/mock")
     public Recipe getMockRecipe() {
         Recipe mockRecipe = new Recipe();
