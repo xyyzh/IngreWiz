@@ -4,16 +4,18 @@ import com.example.IngreWiz.model.Category;
 import com.example.IngreWiz.model.Recipe;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.lang.NonNull;
 import org.springframework.stereotype.Repository;
 
-
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
 import java.util.Arrays;
-
 
 @Repository
 public class RecipeRepository {
@@ -49,15 +51,19 @@ public class RecipeRepository {
 
     public Recipe addRecipe(Recipe recipe, Long chefId) {
         String sql = "INSERT INTO recipe (name, description, category, servings, ingredients, steps, chef_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
-        jdbcTemplate.update(sql, ps -> {
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, recipe.getRecipeName());
             ps.setString(2, recipe.getDescription());
             ps.setString(3, recipe.getCategory().name());
             ps.setInt(4, recipe.getServings());
             ps.setString(5, String.join(", ", recipe.getKeyIngredients()));
-            ps.setString(6, String.join("\n", recipe.getSteps()));
+            ps.setString(6, String.join(", ", recipe.getSteps()));
             ps.setLong(7, chefId);
-        });
+            return ps;
+        }, keyHolder);
+        recipe.setRecipeId(keyHolder.getKey().longValue());
         return recipe;
     }
 
@@ -69,7 +75,7 @@ public class RecipeRepository {
             ps.setString(3, recipe.getCategory().name());
             ps.setInt(4, recipe.getServings());
             ps.setString(5, String.join(", ", recipe.getKeyIngredients()));
-            ps.setString(6, String.join("\n", recipe.getSteps()));
+            ps.setString(6, String.join(", ", recipe.getSteps()));
             ps.setLong(7, recipe.getRecipeId());
         });
         return recipe;

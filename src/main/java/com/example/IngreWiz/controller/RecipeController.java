@@ -40,6 +40,7 @@ public class RecipeController {
         }
         model.addAttribute("recipes", recipes);
         model.addAttribute("chefId", chefId);
+        model.addAttribute("recipe", new Recipe()); // Add this line to ensure the recipe object is available
         return "recipes";
     }
 
@@ -61,7 +62,9 @@ public class RecipeController {
                 logger.info("Found " + recipes.size() + " recipes for chef with ID: " + chefId);
             }
             model.addAttribute("chef", chef.get());
+            model.addAttribute("chefId", chef.get().getId());
             model.addAttribute("recipes", recipes);
+            model.addAttribute("recipe", new Recipe());
             return "recipes";
         } else {
             throw new IllegalArgumentException("Chef not found");
@@ -129,18 +132,4 @@ public class RecipeController {
         recipeService.deleteRecipe(recipeId);
     }
 
-    // GET /chef/{chefId}/profile/recipes/mock - Mock endpoint
-    @GetMapping("/mock")
-    public Recipe getMockRecipe() {
-        Recipe mockRecipe = new Recipe();
-        mockRecipe.setRecipeName("Mock Recipe");
-        mockRecipe.setCategory(Category.JAPANESE);
-        mockRecipe.setServings(4);
-        mockRecipe.setDescription("This is a mock recipe for testing purposes.");
-        mockRecipe.setKeyIngredients(List.of("Mock Ingredient 1", "Mock Ingredient 2"));
-        mockRecipe.setSteps(List.of("Mock Step 1", "Mock Step 2"));
-        mockRecipe.setPhotos(List.of("mockphoto1.jpg", "mockphoto2.jpg"));
-
-        return mockRecipe;
-    }
 }
