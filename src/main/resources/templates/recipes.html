@@ -111,6 +111,7 @@
             document.querySelectorAll('.edit-recipe-btn').forEach(function(button) {
                 button.addEventListener('click', function() {
                     var recipeId = this.closest('.recipe-item').id.split('-')[1];
+                    populateEditForm(recipeId);
                     toggleEditMode(recipeId);
                 });
             });
@@ -140,6 +141,21 @@
                 editMode.style.display = 'none';
             }
         }
+
+        function populateEditForm(recipeId) {
+            var recipe = document.getElementById('recipe-' + recipeId);
+            var recipeName = recipe.querySelector('.recipe-name').textContent;
+            var description = recipe.querySelector('[data-description]').textContent;
+            var servings = recipe.querySelector('[data-servings]').textContent;
+            var ingredients = Array.from(recipe.querySelectorAll('[data-ingredient]')).map(el => el.textContent).join('\n');
+            var steps = Array.from(recipe.querySelectorAll('[data-step]')).map(el => el.textContent).join('\n');
+
+            document.querySelector('#edit-mode-' + recipeId + ' #name').value = recipeName;
+            document.querySelector('#edit-mode-' + recipeId + ' #description').value = description;
+            document.querySelector('#edit-mode-' + recipeId + ' #servings').value = servings;
+            document.querySelector('#edit-mode-' + recipeId + ' #ingredients').value = ingredients;
+            document.querySelector('#edit-mode-' + recipeId + ' #steps').value = steps;
+        }
     </script>
 </head>
 <body>
@@ -157,18 +173,18 @@
                 <label class="recipe-name" th:text="${recipe.recipeName}"></label>
                 <div th:id="'details-' + ${recipe.recipeId}" class="details" style="display: none;">
                     <label>Description:</label>
-                    <p th:text="${recipe.description}"></p>
+                    <p data-description th:text="${recipe.description}"></p>
                     <label>Category:</label>
                     <p th:text="${recipe.category}"></p>
                     <label>Servings:</label>
-                    <p th:text="${recipe.servings}"></p>
+                    <p data-servings th:text="${recipe.servings}"></p>
                     <label>Key Ingredients:</label>
                     <ul>
-                        <li th:each="ingredient : ${recipe.keyIngredients}" th:text="${ingredient}"></li>
+                        <li data-ingredient th:each="ingredient : ${recipe.keyIngredients}" th:text="${ingredient}"></li>
                     </ul>
                     <label>Steps:</label>
                     <ol>
-                        <li th:each="step : ${recipe.steps}" th:text="${step}"></li>
+                        <li data-step th:each="step : ${recipe.steps}" th:text="${step}"></li>
                     </ol>
                     <button class="button edit-recipe-btn" type="button">Edit Recipe</button>
                 </div>
@@ -186,9 +202,9 @@
                     <div class="form-group">
                         <label for="category">Category:</label>
                         <select id="category" th:field="*{category}">
-                            <option value="JAPANESE">Japanese</option>
-                            <option value="ITALIAN">Italian</option>
-                            <option value="MEXICAN">Mexican</option>
+                            <option value="JAPANESE" th:selected="${recipe.category == 'JAPANESE'}">Japanese</option>
+                            <option value="ITALIAN" th:selected="${recipe.category == 'ITALIAN'}">Italian</option>
+                            <option value="MEXICAN" th:selected="${recipe.category == 'MEXICAN'}">Mexican</option>
                             <!-- Add other categories as needed -->
                         </select>
                     </div>
@@ -198,11 +214,11 @@
                     </div>
                     <div class="form-group">
                         <label for="ingredients">Ingredients:</label>
-                        <textarea id="ingredients" th:field="*{keyIngredients}" required></textarea>
+                        <textarea id="ingredients" th:field="*{keyIngredients}" rows="6" cols="50" required></textarea>
                     </div>
                     <div class="form-group">
                         <label for="steps">Steps:</label>
-                        <textarea id="steps" th:field="*{steps}" required></textarea>
+                        <textarea id="steps" th:field="*{steps}" rows="20" cols="50" required></textarea>
                     </div>
                     <div class="form-group button-container">
                         <button type="submit" class="button">Save Recipe</button>

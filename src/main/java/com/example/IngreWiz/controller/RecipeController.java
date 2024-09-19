@@ -80,9 +80,9 @@ public class RecipeController {
             model.addAttribute("recipe", new Recipe());
             return "addRecipe";
         } else {
-        throw new IllegalArgumentException("Chef not found");
+            throw new IllegalArgumentException("Chef not found");
+        }
     }
-}
 
     // POST /chef/{chefId}/profile/recipes/add - Add a new recipe
     @PostMapping("/add")
@@ -93,22 +93,21 @@ public class RecipeController {
         return "addRecipeSuccess";
     }
 
-
     // GET /chef/{chefId}/profile/recipes/{recipeId}/update - Show update form for a recipe
-    @GetMapping("/{recipeId}/update")
-    public String showUpdateForm(@PathVariable Long recipeId, Model model) {
-        Optional<Recipe> recipe = recipeService.getRecipeById(recipeId);
-        if (recipe.isPresent()) {
-            model.addAttribute("recipe", recipe.get());
-            return "updateRecipe";
-        } else {
-            throw new IllegalArgumentException("Recipe not found");
-        }
-    }
+    // @GetMapping("/{recipeId}/update")
+    // public String showUpdateForm(@PathVariable Long recipeId, Model model) {
+    //     Optional<Recipe> recipe = recipeService.getRecipeById(recipeId);
+    //     if (recipe.isPresent()) {
+    //         model.addAttribute("recipe", recipe.get());
+    //         return "updateRecipe";
+    //     } else {
+    //         throw new IllegalArgumentException("Recipe not found");
+    //     }
+    // }
 
-    // PUT /chef/{chefId}/profile/recipes/{recipeId} - Update an existing recipe
-    @PutMapping("/{recipeId}")
-    public Recipe updateRecipe(@RequestBody Recipe recipe, @PathVariable Long recipeId) {
+    // POST /chef/{chefId}/profile/recipes/{recipeId}/update - Update an existing recipe
+    @PostMapping("/{recipeId}/update")
+    public String updateRecipe(@PathVariable Long chefId, @PathVariable Long recipeId, @ModelAttribute Recipe recipe, Model model) {
         Optional<Recipe> optionalRecipe = recipeService.getRecipeById(recipeId);
         if (optionalRecipe.isPresent()) {
             Recipe existingRecipe = optionalRecipe.get();
@@ -119,10 +118,13 @@ public class RecipeController {
             existingRecipe.setKeyIngredients(recipe.getKeyIngredients());
             existingRecipe.setSteps(recipe.getSteps());
             existingRecipe.setPhotos(recipe.getPhotos());
-            return recipeService.updateRecipe(existingRecipe);
+            recipeService.updateRecipe(existingRecipe);
+            model.addAttribute("chefId", chefId);
+            model.addAttribute("recipe", existingRecipe);
+            return "redirect:/chef/" + chefId + "/profile/recipes/view";
         } else {
-            logger.warn("No recipe is updated");
-            return null;
+            logger.warn("No recipe found with ID: " + recipeId);
+            return "error";
         }
     }
 
@@ -131,5 +133,4 @@ public class RecipeController {
     public void deleteRecipe(@PathVariable Long recipeId) {
         recipeService.deleteRecipe(recipeId);
     }
-
 }
