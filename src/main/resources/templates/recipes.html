@@ -202,10 +202,10 @@
                     <div class="form-group">
                         <label for="category">Category:</label>
                         <select id="category" th:field="*{category}">
-                            <option value="JAPANESE" th:selected="${recipe.category == 'JAPANESE'}">Japanese</option>
-                            <option value="ITALIAN" th:selected="${recipe.category == 'ITALIAN'}">Italian</option>
-                            <option value="MEXICAN" th:selected="${recipe.category == 'MEXICAN'}">Mexican</option>
-                            <!-- Add other categories as needed -->
+                            <option th:each="categoryOption : ${T(com.example.IngreWiz.model.Category).values()}"
+                                    th:value="${categoryOption}"
+                                    th:text="${#strings.capitalize(#strings.toLowerCase(categoryOption.toString()))}">
+                            </option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -214,11 +214,11 @@
                     </div>
                     <div class="form-group">
                         <label for="ingredients">Ingredients:</label>
-                        <textarea id="ingredients" th:field="*{keyIngredients}" rows="6" cols="50" required></textarea>
+                        <textarea id="ingredients" th:field="*{keyIngredients}" rows="10" cols="50" required></textarea>
                     </div>
                     <div class="form-group">
                         <label for="steps">Steps:</label>
-                        <textarea id="steps" th:field="*{steps}" rows="20" cols="50" required></textarea>
+                        <textarea id="steps" th:field="*{steps}" rows="10" cols="50" required></textarea>
                     </div>
                     <div class="form-group button-container">
                         <button type="submit" class="button">Save Recipe</button>

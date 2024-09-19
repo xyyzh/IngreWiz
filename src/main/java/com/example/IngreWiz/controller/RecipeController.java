@@ -89,6 +89,7 @@ public class RecipeController {
     public String addRecipe(@PathVariable Long chefId, @ModelAttribute Recipe recipe, Model model) {
         recipeService.addRecipe(recipe, chefId);
         model.addAttribute("chefId", chefId);
+        model.addAttribute("chef", chefService.getChefById(chefId).get());
         model.addAttribute("recipe", recipe);
         return "addRecipeSuccess";
     }
