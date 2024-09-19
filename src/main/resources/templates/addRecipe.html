@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Add Recipe</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .form-group button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 10px 0;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+        }
+        .form-group button:hover {
+            background-color: #45a049;
+        }
+        .button-container {
+            display: flex;
+            gap: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Add Recipe</h1>
+    <form th:action="@{/chef/{chefId}/profile/recipes/add(chefId=${chef.id})}" th:object="${recipe}" method="post">
+        <div class="form-group">
+            <label for="name">Recipe Name:</label>
+            <input type="text" id="name" th:field="*{recipeName}" required />
+        </div>
+        <div class="form-group">
+            <label for="description">Description:</label>
+            <textarea id="description" th:field="*{description}" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="category">Category:</label>
+            <select id="category" th:field="*{category}">
+                <option th:each="categoryOption : ${T(com.example.IngreWiz.model.Category).values()}"
+                        th:value="${categoryOption}"
+                        th:text="${categoryOption.name()}">
+                </option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label for="servings">Servings:</label>
+            <input type="number" id="servings" th:field="*{servings}" required />
+        </div>
+        <div class="form-group">
+            <label for="ingredients">Ingredients:</label>
+            <textarea id="ingredients" th:field="*{keyIngredients}" required></textarea>
+        </div>
+        <div class="form-group">
+            <label for="steps">Steps:</label>
+            <textarea id="steps" th:field="*{steps}" required></textarea>
+        </div>
+        <div class="form-group button-container">
+            <button type="submit" class="button">Add Recipe</button>
+            <button type="button" class="button" th:attr="data-url=@{/chef/{chefId}/profile/recipes(chefId=${chef.id})}" onclick="window.location.href=this.getAttribute('data-url')">Return to Recipe List</button>
+        </div>
+    </form>
+</body>
+</html>

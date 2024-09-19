@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Chef's Recipes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f9f9f9;
+        }
+        h1, h2 {
+            color: #333;
+        }
+        .button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 16px;
+            margin: 10px 0;
+            cursor: pointer;
+            border: none;
+            border-radius: 4px;
+            transition: background-color 0.3s;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        .button-container {
+            display: flex;
+            gap: 10px;
+        }
+        .recipe-item {
+            background-color: white;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        .recipe-item label.recipe-name {
+            font-size: 23px; 
+            color: #006400; /* Dark green color */
+            font-weight: bold;
+            cursor: pointer;
+            display: block;
+            margin-bottom: 15px; /* Add more space below the recipe name */
+        }
+        .details {
+            display: none;
+            margin-left: 20px;
+            margin-top: 10px; /* Add space above the details */
+        }
+        .details label {
+            font-size: 18px; /* Medium font size */
+            color: #000; /* Black color */
+            font-weight: bold;
+            margin-top: 10px; /* Add space above each label */
+        }
+        .details p, .details ul, .details ol {
+            margin-left: 20px; /* Add space to the left of the content */
+            font-size: 16px; /* Default font size */
+            color: #333; /* Default color */
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        .form-group input, .form-group textarea, .form-group select {
+            width: 100%;
+            padding: 10px;
+            box-sizing: border-box;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        .form-group select {
+            background-color: #fff;
+            cursor: pointer;
+        }
+        .form-group select:focus {
+            border-color: #4CAF50;
+        }
+        .form-group button {
+            margin-top: 10px;
+        }
+        .form-group .button-container {
+            display: flex;
+            gap: 10px;
+        }
+        .edit-mode {
+            display: none;
+        }
+    </style>
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            // Toggle recipe details
+            document.querySelectorAll('.recipe-name').forEach(function(element) {
+                element.addEventListener('click', function() {
+                    var recipeId = this.closest('.recipe-item').id.split('-')[1];
+                    toggleDetails(recipeId);
+                });
+            });
+
+            // Edit recipe buttons
+            document.querySelectorAll('.edit-recipe-btn').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    var recipeId = this.closest('.recipe-item').id.split('-')[1];
+                    toggleEditMode(recipeId);
+                });
+            });
+
+            // Cancel edit buttons
+            document.querySelectorAll('.cancel-edit-btn').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    var recipeId = this.closest('.recipe-item').id.split('-')[1];
+                    toggleEditMode(recipeId);
+                });
+            });
+        });
+
+        function toggleDetails(recipeId) {
+            var details = document.getElementById('details-' + recipeId);
+            details.style.display = (details.style.display === 'none' || details.style.display === '') ? 'block' : 'none';
+        }
+
+        function toggleEditMode(recipeId) {
+            var viewMode = document.getElementById('view-mode-' + recipeId);
+            var editMode = document.getElementById('edit-mode-' + recipeId);
+            if (editMode.style.display === 'none' || editMode.style.display === '') {
+                viewMode.style.display = 'none';
+                editMode.style.display = 'block';
+            } else {
+                viewMode.style.display = 'block';
+                editMode.style.display = 'none';
+            }
+        }
+    </script>
+</head>
+<body>
+    <h1>Recipes</h1>
+    <div class="button-container">
+        <button class="button" th:attr="data-url=@{/chef/{chefId}/profile/recipes/add(chefId=${chefId})}" onclick="window.location.href=this.getAttribute('data-url')">Add Recipe</button>
+        <button class="button" th:attr="data-url=@{/chef/{chefId}/profile(chefId=${chefId})}" onclick="window.location.href=this.getAttribute('data-url')">Return to Profile</button>
+    </div>
+    <div th:if="${#lists.isEmpty(recipes)}">
+        <p>You don't have any recipe yet!</p>
+    </div>
+    <div th:if="${!#lists.isEmpty(recipes)}">
+        <div th:each="recipe : ${recipes}" class="recipe-item" th:id="'recipe-' + ${recipe.recipeId}">
+            <div th:id="'view-mode-' + ${recipe.recipeId}">
+                <label class="recipe-name" th:text="${recipe.recipeName}"></label>
+                <div th:id="'details-' + ${recipe.recipeId}" class="details" style="display: none;">
+                    <label>Description:</label>
+                    <p th:text="${recipe.description}"></p>
+                    <label>Category:</label>
+                    <p th:text="${recipe.category}"></p>
+                    <label>Servings:</label>
+                    <p th:text="${recipe.servings}"></p>
+                    <label>Key Ingredients:</label>
+                    <ul>
+                        <li th:each="ingredient : ${recipe.keyIngredients}" th:text="${ingredient}"></li>
+                    </ul>
+                    <label>Steps:</label>
+                    <ol>
+                        <li th:each="step : ${recipe.steps}" th:text="${step}"></li>
+                    </ol>
+                    <button class="button edit-recipe-btn" type="button">Edit Recipe</button>
+                </div>
+            </div>
+            <div th:id="'edit-mode-' + ${recipe.recipeId}" class="edit-mode" style="display: none;">
+                <form th:action="@{/chef/{chefId}/profile/recipes/{recipeId}/update(chefId=${chefId}, recipeId=${recipe.recipeId})}" th:object="${recipe}" method="post">
+                    <div class="form-group">
+                        <label for="name">Recipe Name:</label>
+                        <input type="text" id="name" th:field="*{recipeName}" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="description">Description:</label>
+                        <textarea id="description" th:field="*{description}" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="category">Category:</label>
+                        <select id="category" th:field="*{category}">
+                            <option value="JAPANESE">Japanese</option>
+                            <option value="ITALIAN">Italian</option>
+                            <option value="MEXICAN">Mexican</option>
+                            <!-- Add other categories as needed -->
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="servings">Servings:</label>
+                        <input type="number" id="servings" th:field="*{servings}" required />
+                    </div>
+                    <div class="form-group">
+                        <label for="ingredients">Ingredients:</label>
+                        <textarea id="ingredients" th:field="*{keyIngredients}" required></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="steps">Steps:</label>
+                        <textarea id="steps" th:field="*{steps}" required></textarea>
+                    </div>
+                    <div class="form-group button-container">
+                        <button type="submit" class="button">Save Recipe</button>
+                        <button type="button" class="button cancel-edit-btn">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
