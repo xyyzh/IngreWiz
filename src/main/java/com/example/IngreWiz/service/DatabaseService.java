@@ -17,7 +17,7 @@ public class DatabaseService {
                                   "EMAIL TEXT NOT NULL," +
                                   "CATEGORY TEXT NOT NULL," +
                                   "PHONE_NUMBER TEXT," +
-                                  "PROFILE_PICTURE_URL TEXT)";
+                                  "BIO TEXT)";
             stmt.execute(chefTableSql);
 
             String recipeTableSql = "CREATE TABLE IF NOT EXISTS recipe (" +

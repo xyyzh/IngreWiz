@@ -85,6 +85,7 @@ public class ChefController {
         Optional<Chef> chef = chefService.getChefById(chefId);
         if (chef.isPresent()) {
             model.addAttribute("chef", chef.get());
+            model.addAttribute("categories", Category.values()); 
             return "updateChefProfile";
         } else {
             throw new IllegalArgumentException("Chef not found");
@@ -92,14 +93,15 @@ public class ChefController {
     }
 
     @PostMapping("/chef/{chefId}/update")
-    public String updateChefProfile(@PathVariable Long chefId, @RequestParam String phoneNumber, @RequestParam String profilePictureUrl, Model model) {
+    public String updateChefProfile(@PathVariable Long chefId, @RequestParam String email, @RequestParam Category preferredCuisineCategory, @RequestParam String phoneNumber, @RequestParam String bio, Model model) {
         Optional<Chef> chefOptional = chefService.getChefById(chefId);
         if (chefOptional.isPresent()) {
             Chef chef = chefOptional.get();
             chef.setPhoneNumber(phoneNumber);
-            chef.setProfilePictureUrl(profilePictureUrl);
-            chefService.updateChefProfile(chefId, phoneNumber, profilePictureUrl);
+            chef.setBio(bio);
+            chefService.updateChefProfile(chefId, email, preferredCuisineCategory, phoneNumber, bio);
             model.addAttribute("chef", chef);
+            model.addAttribute("categories", Category.values()); 
             return "redirect:/chef/" + chefId + "/profile";
         } else {
             throw new IllegalArgumentException("Chef not found");

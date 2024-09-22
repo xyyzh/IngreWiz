@@ -47,7 +47,9 @@
             text-align: left;
         }
 
-        input[type="text"] {
+        input[type="text"],
+        input[type="email"],
+        select {
             width: 100%;
             padding: 10px;
             border: 1px solid #cccccc;
@@ -90,12 +92,23 @@
         <h1>Update Profile</h1>
         <form th:action="@{/chef/{id}/update(id=${chef.id})}" th:object="${chef}" method="post">
             <div class="form-group">
+                <label for="email">Email:</label>
+                <input type="email" id="email" th:field="*{email}" />
+            </div>
+            <div class="form-group">
+                <label for="preferredCuisineCategory">Your Favorite Cuisine Category:</label>
+                <select id="preferredCuisineCategory" th:field="*{preferredCuisineCategory}">
+                    <option value="" disabled selected>Select a category</option>
+                    <option th:each="category : ${categories}" th:value="${category}" th:text="${category}"></option>
+                </select>
+            </div>
+            <div class="form-group">
                 <label for="phoneNumber">Phone Number:</label>
                 <input type="text" id="phoneNumber" th:field="*{phoneNumber}" required />
             </div>
             <div class="form-group">
-                <label for="profilePictureUrl">Profile Picture URL:</label>
-                <input type="text" id="profilePictureUrl" th:field="*{profilePictureUrl}" required />
+                <label for="bio">Bio:</label>
+                <input type="text" id="bio" th:field="*{bio}" />
             </div>
             <div class="form-group">
                 <button type="submit" class="button">Update and View Profile</button>

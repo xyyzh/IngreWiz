@@ -34,23 +34,6 @@ public class ChefService {
         return chefRepository.addChef(chef);
     }
 
-    // public void addRecipeToChef(Long chefId, Long recipeId) {
-    //     Optional<Chef> optionalChef = getChefById(chefId);
-    //     Optional<Recipe> optionalRecipe = recipeService.getRecipeById(recipeId);
-
-    //     if (optionalChef.isEmpty() || optionalRecipe.isEmpty()) {
-    //         throw new RuntimeException("Chef or Recipe not found.");
-    //     }
-
-    //     Chef chef = optionalChef.get();
-    //     Recipe recipe = optionalRecipe.get();
-
-    //     // Set the chef for the recipe
-    //     recipe.setChef(chef);
-
-    //     // Save the updated recipe
-    //     recipeService.addRecipe(recipe);
-    // }
 
     public void removeRecipeFromChef(Long chefId, Recipe recipe) {
         Optional<Chef> optionalChef = chefRepository.findById(chefId);
@@ -88,13 +71,15 @@ public class ChefService {
                             .collect(Collectors.toList());
     }
 
-    public void updateChefProfile(Long id, String phoneNumber, String profilePictureUrl) {
+    public void updateChefProfile(Long id, String email, Category category, String phoneNumber, String bio) {
         Optional<Chef> optionalChef = getChefById(id);
 
         if (optionalChef.isPresent()) {
             Chef chef = optionalChef.get();
+            chef.setEmail(email);
+            chef.setPreferredCuisineCategory(category);
             chef.setPhoneNumber(phoneNumber);
-            chef.setProfilePictureUrl(profilePictureUrl);
+            chef.setBio(bio);
             chefRepository.updateChef(chef);
         } else {
             throw new RuntimeException("Chef not found");

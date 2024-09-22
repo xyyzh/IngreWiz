@@ -111,8 +111,8 @@
             <span th:text="${chef.phoneNumber}"></span>
         </div>
         <div class="profile-item">
-            <label>Profile Picture:</label>
-            <span th:text="${chef.profilePictureUrl}"></span>
+            <label>Bio:</label>
+            <span th:text="${chef.bio}"></span>
         </div>
         <div>
             <a th:href="@{/chef/{id}/update(id=${chef.id})}" class="button">Update Profile</a>

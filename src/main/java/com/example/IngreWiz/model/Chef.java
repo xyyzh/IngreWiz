@@ -22,7 +22,7 @@ public class Chef {
     private String email;
     private String phoneNumber;
 
-    private String profilePictureUrl;
+    private String bio;
 
     public Chef(){}
 

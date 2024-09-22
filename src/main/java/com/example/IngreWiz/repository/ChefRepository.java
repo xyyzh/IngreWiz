@@ -71,8 +71,8 @@ public class ChefRepository {
         if (!findById(chef.getId()).isPresent()) {
             throw new IllegalArgumentException("Chef does not exist");
         }
-        String sql = "UPDATE chef SET phone_number = ?, profile_picture_url = ? WHERE id = ?";
-        jdbcTemplate.update(sql, chef.getPhoneNumber(), chef.getProfilePictureUrl(), chef.getId());
+        String sql = "UPDATE chef SET email = ?, category = ?, phone_number = ?, bio = ? WHERE id = ?";
+        jdbcTemplate.update(sql, chef.getEmail(), chef.getPreferredCuisineCategory().name(), chef.getPhoneNumber(), chef.getBio(), chef.getId());
     }
 
     public Iterable<Chef> findAll() {
@@ -90,7 +90,7 @@ public class ChefRepository {
             chef.setEmail(rs.getString("email"));
             chef.setPreferredCuisineCategory(Category.valueOf(rs.getString("category")));
             chef.setPhoneNumber(rs.getString("phone_number"));
-            chef.setProfilePictureUrl(rs.getString("profile_picture_url"));
+            chef.setBio(rs.getString("bio"));
             return chef;
         }
     }
