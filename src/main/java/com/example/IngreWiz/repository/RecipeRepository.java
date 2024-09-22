@@ -59,7 +59,7 @@ public class RecipeRepository {
             ps.setString(3, recipe.getCategory().name());
             ps.setInt(4, recipe.getServings());
             ps.setString(5, String.join(", ", recipe.getKeyIngredients()));
-            ps.setString(6, String.join(", ", recipe.getSteps()));
+            ps.setString(6, String.join("\n", recipe.getSteps()));
             ps.setLong(7, chefId);
             return ps;
         }, keyHolder);
@@ -75,7 +75,7 @@ public class RecipeRepository {
             ps.setString(3, recipe.getCategory().name());
             ps.setInt(4, recipe.getServings());
             ps.setString(5, String.join(", ", recipe.getKeyIngredients()));
-            ps.setString(6, String.join(", ", recipe.getSteps()));
+            ps.setString(6, String.join("\n", recipe.getSteps()));
             ps.setLong(7, recipe.getRecipeId());
         });
         return recipe;
@@ -100,7 +100,7 @@ public class RecipeRepository {
             recipe.setCategory(Category.valueOf(rs.getString("category")));
             recipe.setServings(rs.getInt("servings"));
             recipe.setDescription(rs.getString("description"));
-            recipe.setKeyIngredients(Arrays.asList(rs.getString("ingredients").split(",")));
+            recipe.setKeyIngredients(Arrays.asList(rs.getString("ingredients").split(", ")));
             recipe.setSteps(Arrays.asList(rs.getString("steps").split("\n")));
             recipe.setChefId(rs.getLong("chef_id"));
             return recipe;

@@ -147,8 +147,8 @@
             var recipeName = recipe.querySelector('.recipe-name').textContent;
             var description = recipe.querySelector('[data-description]').textContent;
             var servings = recipe.querySelector('[data-servings]').textContent;
-            var ingredients = Array.from(recipe.querySelectorAll('[data-ingredient]')).map(el => el.textContent).join('\n');
-            var steps = Array.from(recipe.querySelectorAll('[data-step]')).map(el => el.textContent).join('\n');
+            var ingredients = Array.from(recipe.querySelectorAll('[data-ingredient]')).map(el => el.textContent);
+            var steps = Array.from(recipe.querySelectorAll('[data-step]')).map(el => el.textContent);
 
             document.querySelector('#edit-mode-' + recipeId + ' #name').value = recipeName;
             document.querySelector('#edit-mode-' + recipeId + ' #description').value = description;
